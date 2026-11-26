@@ -34,4 +34,9 @@ intellijPlatform {
             untilBuild = provider { null }
         }
     }
+    // Publication sur le JetBrains Marketplace : `.\gradlew.bat publishPlugin`
+    // Le jeton est lu dans la variable d'environnement PUBLISH_TOKEN (jamais écrit dans un fichier).
+    publishing {
+        token = providers.environmentVariable("PUBLISH_TOKEN")
+    }
 }
