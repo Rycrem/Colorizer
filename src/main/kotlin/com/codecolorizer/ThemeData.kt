@@ -1,7 +1,7 @@
 package com.codecolorizer
 
 /**
- * Un thème Code Colorizer, tel qu'il est importé / exporté en JSON :
+ * Un thème Colorizer, tel qu'il est importé / exporté en JSON :
  *
  * {
  *   "name": "Mon thème",

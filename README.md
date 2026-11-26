@@ -1,4 +1,4 @@
-# 🎨 Code Colorizer
+# 🎨 Colorizer
 
 > Plugin pour les IDE JetBrains qui permet de changer la couleur de **n'importe quel élément du code**
 > en quelques clics : mots-clés, chaînes, commentaires, méthodes, champs, numéros de ligne…
@@ -80,7 +80,7 @@ cd code-colorizer
 .\gradlew.bat buildPlugin        # macOS / Linux : ./gradlew buildPlugin
 ```
 Le premier build télécharge Gradle et IntelliJ 2024.3 (environ 1 Go) : il prend quelques minutes.
-Le plugin est généré ici : `build/distributions/code-colorizer-1.0.0.zip`.
+Le plugin est généré ici : `build/distributions/colorizer-<version>.zip`.
 
 ### 2. L'installer dans l'IDE
 1. **Settings** (`Ctrl+Alt+S`) › **Plugins**.
@@ -94,7 +94,7 @@ La fenêtre **Colorizer** apparaît alors dans la barre latérale droite.
   Tes couleurs et tes thèmes importés sont conservés : ils sont stockés dans `codeColorizer.xml`,
   dans la configuration de l'IDE.
 - **Désinstallation** : clique d'abord sur **Tout réinitialiser** dans Colorizer pour retrouver
-  tes couleurs d'origine, puis *Settings › Plugins › Code Colorizer › Uninstall*.
+  tes couleurs d'origine, puis *Settings › Plugins › Colorizer › Uninstall*.
 
 ### Problèmes fréquents
 | Symptôme | Solution |

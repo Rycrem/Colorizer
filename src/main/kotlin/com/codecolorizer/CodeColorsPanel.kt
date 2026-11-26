@@ -110,7 +110,7 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
         })
         onlyModified.addActionListener { refilter() }
         // Thèmes
-        themeCombo.renderer = SimpleListCellRenderer.create("") { t: ThemeData ->
+        themeCombo.renderer = textRenderer { t: ThemeData ->
             t.name + "  —  " + (if (t.dark) "dark" else "light") + (if (t.builtIn) "" else " · imported")
         }
         themeCombo.addActionListener { updateThemeButtons() }
@@ -150,7 +150,7 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
         }
 
         // Éditeur
-        effectCombo.renderer = SimpleListCellRenderer.create("") { effectName(it) }
+        effectCombo.renderer = textRenderer { e: EffectType -> effectName(e) }
         listOf(fgCheck, bgCheck, effectCheck, boldCheck, italicCheck).forEach { it.addActionListener { save() } }
         listOf(fgColor, bgColor, effectColor).forEach { panel ->
             panel.addActionListener {
@@ -274,7 +274,7 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
 
     private fun importTheme() {
         val descriptor = FileChooserDescriptorFactory.createSingleFileDescriptor("json")
-            .withTitle("Import a Code Colorizer theme")
+            .withTitle("Import a Colorizer theme")
         val file = FileChooser.chooseFile(descriptor, project, null) ?: return
         val theme = try {
             ThemeJson.read(String(file.contentsToByteArray(), Charsets.UTF_8))
@@ -465,6 +465,13 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
         } else {
             preview.background = scheme.defaultBackground
             preview.foreground = c ?: scheme.defaultForeground
+        }
+    }
+
+    /** Rendu texte simple pour les listes déroulantes (remplace SimpleListCellRenderer.create, voué à disparaître). */
+    private fun <T> textRenderer(text: (T) -> String) = object : SimpleListCellRenderer<T>() {
+        override fun customize(list: JList<out T>, value: T?, index: Int, selected: Boolean, hasFocus: Boolean) {
+            this.text = if (value == null) "" else text(value)
         }
     }
 

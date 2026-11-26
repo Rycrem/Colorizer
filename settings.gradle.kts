@@ -1,1 +1,1 @@
-rootProject.name = "code-colorizer"
+rootProject.name = "colorizer"
