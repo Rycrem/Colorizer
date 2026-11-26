@@ -1,11 +1,12 @@
 name: Plugin
 
-# - À chaque push sur main et chaque pull request : on construit le plugin (vérifie que ça compile).
-# - Quand on pousse un tag de version (ex. v1.10.0) : on construit ET on publie sur le JetBrains Marketplace.
+# - Chaque push sur main et chaque pull request : on construit le plugin (vérifie que ça compile).
+# - Push sur main avec une NOUVELLE version dans build.gradle.kts : on publie aussi sur le
+#   JetBrains Marketplace, puis on crée le tag vX.Y.Z. Si la version n'a pas changé (le tag
+#   existe déjà), rien n'est publié.
 on:
   push:
     branches: [ main ]
-    tags: [ 'v*' ]
   pull_request:
 
 jobs:
@@ -33,29 +34,45 @@ jobs:
 
   publish:
     needs: build
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # pour pousser le tag de version
     steps:
       - uses: actions/checkout@v4
 
+      - name: Is this a new version?
+        id: version
+        run: |
+          VERSION=$(grep -E '^version = ' build.gradle.kts | sed -E 's/version = "(.*)"/\1/')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --tags origin "refs/tags/v$VERSION" > /dev/null; then
+            echo "Version $VERSION already published (tag v$VERSION exists): nothing to do."
+            echo "new=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "New version $VERSION: publishing."
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/setup-java@v4
+        if: steps.version.outputs.new == 'true'
         with:
           distribution: temurin
           java-version: '21'
 
       - uses: gradle/actions/setup-gradle@v4
-
-      - name: Check that the tag matches the plugin version
-        run: |
-          VERSION=$(grep -E '^version = ' build.gradle.kts | sed -E 's/version = "(.*)"/\1/')
-          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
-            echo "Tag $GITHUB_REF_NAME does not match version $VERSION in build.gradle.kts"
-            exit 1
-          fi
+        if: steps.version.outputs.new == 'true'
 
       - name: Publish to JetBrains Marketplace
+        if: steps.version.outputs.new == 'true'
         env:
           PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
         run: |
           chmod +x gradlew
           ./gradlew publishPlugin --console=plain
+
+      - name: Tag the published version
+        if: steps.version.outputs.new == 'true'
+        run: |
+          git tag "v${{ steps.version.outputs.version }}"
+          git push origin "v${{ steps.version.outputs.version }}"
