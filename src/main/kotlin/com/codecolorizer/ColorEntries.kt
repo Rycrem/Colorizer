@@ -23,7 +23,7 @@ data class ColorEntry(
 }
 
 object ColorEntries {
-    const val OTHER_GROUP = "Autres"
+    const val OTHER_GROUP = "Other"
 
     /** Tous les éléments déclarés par les langages installés (même liste que Settings › Color Scheme). */
     fun all(): List<ColorEntry> {
@@ -57,19 +57,19 @@ object ColorEntries {
     fun describe(key: ColorKey, catalog: List<ColorEntry>): ColorEntry =
         catalog.firstOrNull { it.colorKey == key }
             ?: ColorEntry(
-                "Éditeur", EDITOR_NAMES[key.externalName] ?: key.externalName, colorKey = key,
+                "Editor", EDITOR_NAMES[key.externalName] ?: key.externalName, colorKey = key,
                 isBackground = key.externalName.contains("BACKGROUND") || key.externalName.endsWith("ROW_COLOR")
             )
 
     private val EDITOR_NAMES = mapOf(
-        "LINE_NUMBERS_COLOR" to "Numéros de ligne",
-        "LINE_NUMBER_ON_CARET_ROW_COLOR" to "Numéro de la ligne du curseur",
-        "GUTTER_BACKGROUND" to "Fond de la marge",
-        "CARET_ROW_COLOR" to "Ligne du curseur",
-        "SELECTION_BACKGROUND" to "Fond de la sélection",
-        "SELECTION_FOREGROUND" to "Texte sélectionné",
-        "CARET_COLOR" to "Curseur",
-        "INDENT_GUIDE" to "Guides d'indentation",
-        "RIGHT_MARGIN_COLOR" to "Marge droite",
+        "LINE_NUMBERS_COLOR" to "Line numbers",
+        "LINE_NUMBER_ON_CARET_ROW_COLOR" to "Caret row line number",
+        "GUTTER_BACKGROUND" to "Gutter background",
+        "CARET_ROW_COLOR" to "Caret row",
+        "SELECTION_BACKGROUND" to "Selection background",
+        "SELECTION_FOREGROUND" to "Selected text",
+        "CARET_COLOR" to "Caret",
+        "INDENT_GUIDE" to "Indent guides",
+        "RIGHT_MARGIN_COLOR" to "Right margin",
     )
 }

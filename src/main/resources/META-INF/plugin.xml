@@ -3,29 +3,29 @@
     <name>Code Colorizer</name>
     <vendor>Code Colorizer</vendor>
     <description><![CDATA[
-        Modifie facilement la couleur de chaque élément du code :
+        Easily change the color of every code element:
         <ul>
-          <li>Fenêtre <b>Code Colors</b> : tous les éléments colorables de chaque langage
-              (mots-clés, chaînes, commentaires, méthodes, champs, annotations...), avec
-              couleur du texte, fond, gras, italique et soulignement.</li>
-          <li>Clic droit dans l'éditeur → <b>Changer la couleur de cet élément</b> :
-              retrouve automatiquement ce qui colore le code sous le curseur.</li>
-          <li>Bouton <b>Cliquer sur un élément de l'IDE</b> : clique sur du code, un numéro de ligne,
-              la marge... dans l'éditeur pour l'afficher dans la liste et changer sa couleur.</li>
-          <li><b>7 thèmes prêts à l'emploi</b> (Minuit néon, Océan profond, Forêt, Braise,
-              Contraste élevé, Papier, Pastel doux) applicables en un clic ; ils gardent le fond
-              et les numéros de ligne de ton thème d'IDE.</li>
-          <li><b>Import / export</b> de thèmes en JSON pour les partager ou les sauvegarder.</li>
-          <li>Les changements s'appliquent en direct et sont conservés par thème.</li>
+          <li><b>Colorizer</b> tool window: every colorable element of each language
+              (keywords, strings, comments, methods, fields, annotations...), with
+              text color, background, bold, italic and underline.</li>
+          <li>Right-click in the editor → <b>Change Color of This Element</b>:
+              automatically finds what colors the code under the caret.</li>
+          <li><b>Pick an element in the IDE</b> button: click some code, a line number,
+              the gutter... in the editor to show it in the list and change its color.</li>
+          <li><b>8 preset themes</b> (Purple &amp; Green, Neon Pink &amp; Mint, Blue &amp; Turquoise,
+              Amber &amp; Sage, Orange &amp; Gold, Yellow &amp; Neon Green, Burgundy &amp; Green, Magenta &amp; Soft Blue)
+              applied in one click; they keep your IDE theme's background and line numbers.</li>
+          <li><b>Import / export</b> themes as JSON to share or back them up.</li>
+          <li>Changes apply live and are saved per color scheme.</li>
         </ul>
     ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Code Colors"
+        <toolWindow id="Colorizer"
                     anchor="right"
-                    icon="AllIcons.Actions.Colors"
+                    icon="/icons/colorizer.svg"
                     factoryClass="com.codecolorizer.CodeColorsToolWindowFactory"/>
         <postStartupActivity implementation="com.codecolorizer.ApplyOverridesOnStartup"/>
     </extensions>
@@ -38,8 +38,8 @@
     <actions>
         <action id="CodeColorizer.ChangeColorAtCaret"
                 class="com.codecolorizer.ChangeColorAtCaretAction"
-                text="Changer la Couleur de cet Élément"
-                description="Modifier la couleur de l'élément de code sous le curseur"
+                text="Change Color of This Element"
+                description="Change the color of the code element under the caret"
                 icon="AllIcons.Actions.Colors">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift C"/>

@@ -1,124 +1,124 @@
 {
-  "name": "Forêt",
-  "dark": true,
+  "name": "Magenta & Soft Blue (light)",
+  "dark": false,
   "editor": {
-    "CARET_COLOR": "#E0A458",
-    "INDENT_GUIDE": "#283129",
-    "RIGHT_MARGIN_COLOR": "#283129"
+    "CARET_COLOR": "#B84FA0",
+    "INDENT_GUIDE": "#EFEAF7",
+    "RIGHT_MARGIN_COLOR": "#EFEAF7"
   },
   "attributes": {
     "TEXT": {
-      "foreground": "#DCE3D2"
+      "foreground": "#3B3850"
     },
     "DEFAULT_KEYWORD": {
-      "foreground": "#E0A458",
+      "foreground": "#B84FA0",
       "bold": true
     },
     "DEFAULT_STRING": {
-      "foreground": "#A8CC8C"
+      "foreground": "#3E9A6E"
     },
     "DEFAULT_VALID_STRING_ESCAPE": {
-      "foreground": "#E6D38A"
+      "foreground": "#C48A1E"
     },
     "DEFAULT_NUMBER": {
-      "foreground": "#D98E73"
+      "foreground": "#D0663E"
     },
     "DEFAULT_LINE_COMMENT": {
-      "foreground": "#6F7E68",
+      "foreground": "#A6A2BA",
       "italic": true
     },
     "DEFAULT_BLOCK_COMMENT": {
-      "foreground": "#6F7E68",
+      "foreground": "#A6A2BA",
       "italic": true
     },
     "DEFAULT_DOC_COMMENT": {
-      "foreground": "#839479",
+      "foreground": "#9894AE",
       "italic": true
     },
     "DEFAULT_DOC_COMMENT_TAG": {
-      "foreground": "#A3B394"
+      "foreground": "#7E7A96"
     },
     "DEFAULT_FUNCTION_DECLARATION": {
-      "foreground": "#8CC4A8"
+      "foreground": "#4A7BD0"
     },
     "DEFAULT_FUNCTION_CALL": {
-      "foreground": "#B0D9C4"
+      "foreground": "#5A8BDA"
     },
     "DEFAULT_STATIC_METHOD": {
-      "foreground": "#B0D9C4"
+      "foreground": "#5A8BDA"
     },
     "DEFAULT_INSTANCE_METHOD": {
-      "foreground": "#B0D9C4"
+      "foreground": "#5A8BDA"
     },
     "DEFAULT_INSTANCE_FIELD": {
-      "foreground": "#C9A9D6"
+      "foreground": "#9161C9"
     },
     "DEFAULT_STATIC_FIELD": {
-      "foreground": "#D8B4E0",
+      "foreground": "#A86FD6",
       "italic": true
     },
     "DEFAULT_CONSTANT": {
-      "foreground": "#D8B4E0",
+      "foreground": "#A86FD6",
       "italic": true
     },
     "DEFAULT_GLOBAL_VARIABLE": {
-      "foreground": "#D8B4E0",
+      "foreground": "#A86FD6",
       "italic": true
     },
     "DEFAULT_CLASS_NAME": {
-      "foreground": "#E6D38A"
+      "foreground": "#2E9AA6"
     },
     "DEFAULT_CLASS_REFERENCE": {
-      "foreground": "#E6D38A"
+      "foreground": "#2E9AA6"
     },
     "DEFAULT_INTERFACE_NAME": {
-      "foreground": "#E6D38A"
+      "foreground": "#2E9AA6"
     },
     "DEFAULT_METADATA": {
-      "foreground": "#9BB86C"
+      "foreground": "#8A9A2A"
     },
     "DEFAULT_PARAMETER": {
-      "foreground": "#E3B597",
+      "foreground": "#C2703E",
       "italic": true
     },
     "DEFAULT_LOCAL_VARIABLE": {
-      "foreground": "#DCE3D2"
+      "foreground": "#3B3850"
     },
     "DEFAULT_IDENTIFIER": {
-      "foreground": "#DCE3D2"
+      "foreground": "#3B3850"
     },
     "DEFAULT_OPERATION_SIGN": {
-      "foreground": "#C9A66B"
+      "foreground": "#6E6A86"
     },
     "DEFAULT_BRACES": {
-      "foreground": "#8A9682"
+      "foreground": "#8A86A0"
     },
     "DEFAULT_BRACKETS": {
-      "foreground": "#8A9682"
+      "foreground": "#8A86A0"
     },
     "DEFAULT_PARENTHS": {
-      "foreground": "#8A9682"
+      "foreground": "#8A86A0"
     },
     "DEFAULT_DOT": {
-      "foreground": "#8A9682"
+      "foreground": "#8A86A0"
     },
     "DEFAULT_COMMA": {
-      "foreground": "#8A9682"
+      "foreground": "#8A86A0"
     },
     "DEFAULT_SEMICOLON": {
-      "foreground": "#8A9682"
+      "foreground": "#8A86A0"
     },
     "DEFAULT_PREDEFINED_SYMBOL": {
-      "foreground": "#E6D38A"
+      "foreground": "#2E9AA6"
     },
     "DEFAULT_TAG": {
-      "foreground": "#E0A458"
+      "foreground": "#B84FA0"
     },
     "DEFAULT_ATTRIBUTE": {
-      "foreground": "#8CC4A8"
+      "foreground": "#4A7BD0"
     },
     "DEFAULT_LABEL": {
-      "foreground": "#E6D38A"
+      "foreground": "#C48A1E"
     }
   }
 }

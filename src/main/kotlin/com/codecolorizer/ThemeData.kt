@@ -59,8 +59,8 @@ object ThemeJson {
     /** Lit un thème. Lève IllegalArgumentException si le fichier n'est pas valide. */
     fun read(text: String): ThemeData {
         val root = Parser(text).parseRoot() as? Map<*, *>
-            ?: throw IllegalArgumentException("Le fichier ne contient pas un objet JSON.")
-        val name = root["name"] as? String ?: "Thème importé"
+            ?: throw IllegalArgumentException("The file does not contain a JSON object.")
+        val name = root["name"] as? String ?: "Imported theme"
         val dark = root["dark"] as? Boolean ?: true
         val theme = ThemeData(name, dark)
         (root["editor"] as? Map<*, *>)?.forEach { (k, v) ->
@@ -79,7 +79,7 @@ object ThemeJson {
             }
         }
         if (theme.attributes.isEmpty() && theme.editorColors.isEmpty())
-            throw IllegalArgumentException("Aucune couleur trouvée dans ce fichier.")
+            throw IllegalArgumentException("No colors found in this file.")
         return theme
     }
 
@@ -97,11 +97,11 @@ object ThemeJson {
     private class Parser(val s: String) {
         var i = 0
 
-        fun parseRoot(): Any? { val v = value(); ws(); if (i != s.length) fail("contenu inattendu"); return v }
+        fun parseRoot(): Any? { val v = value(); ws(); if (i != s.length) fail("unexpected content"); return v }
 
         fun value(): Any? {
             ws()
-            if (i >= s.length) fail("fin de fichier inattendue")
+            if (i >= s.length) fail("unexpected end of file")
             return when (val c = s[i]) {
                 '{' -> obj()
                 '[' -> arr()
@@ -109,7 +109,7 @@ object ThemeJson {
                 't' -> lit("true", true)
                 'f' -> lit("false", false)
                 'n' -> lit("null", null)
-                else -> if (c == '-' || c.isDigit()) number() else fail("caractère '$c' inattendu")
+                else -> if (c == '-' || c.isDigit()) number() else fail("unexpected character '$c'")
             }
         }
 
@@ -140,7 +140,7 @@ object ThemeJson {
             expect('"')
             val sb = StringBuilder()
             while (true) {
-                if (i >= s.length) fail("chaîne non terminée")
+                if (i >= s.length) fail("unterminated string")
                 val c = s[i++]
                 when (c) {
                     '"' -> return sb.toString()
@@ -160,20 +160,20 @@ object ThemeJson {
         fun number(): Double {
             val start = i
             while (i < s.length && (s[i].isDigit() || s[i] in "+-.eE")) i++
-            return s.substring(start, i).toDoubleOrNull() ?: fail("nombre invalide")
+            return s.substring(start, i).toDoubleOrNull() ?: fail("invalid number")
         }
 
         fun lit(word: String, v: Any?): Any? {
-            if (!s.startsWith(word, i)) fail("mot inattendu")
+            if (!s.startsWith(word, i)) fail("unexpected word")
             i += word.length; return v
         }
 
         fun ws() { while (i < s.length && s[i].isWhitespace()) i++ }
         fun peek(c: Char) = i < s.length && s[i] == c
-        fun expect(c: Char) { if (!peek(c)) fail("'$c' attendu"); i++ }
+        fun expect(c: Char) { if (!peek(c)) fail("'$c' expected"); i++ }
         fun fail(msg: String): Nothing {
             val line = s.substring(0, minOf(i, s.length)).count { it == '\n' } + 1
-            throw IllegalArgumentException("JSON invalide (ligne $line) : $msg")
+            throw IllegalArgumentException("Invalid JSON (line $line): $msg")
         }
     }
 }
@@ -181,7 +181,7 @@ object ThemeJson {
 /** Thèmes prêts à l'emploi, livrés dans le plugin (dossier resources/presets, fichiers .json). */
 object ThemePresets {
     private val FILES = listOf(
-        "minuit-neon", "ocean-profond", "foret", "braise", "contraste-eleve", "papier", "pastel-doux"
+        "one-dark", "rose-fluo-menthe", "bleu-turquoise", "ambre-sauge", "orange-or", "jaune-vert-fluo", "bordeaux-vert-clair", "magenta-bleu-clair"
     )
 
     val all: List<ThemeData> by lazy {

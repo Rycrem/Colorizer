@@ -15,13 +15,13 @@ et pour **tous les langages installés**.
 ## ✨ Fonctionnalités
 
 ### 🖱️ Cliquer sur un élément pour le recolorer
-Dans la fenêtre **Code Colors**, active **« Cliquer sur un élément de l'IDE »**, puis clique n'importe où
+Dans la fenêtre **Colorizer**, active **« Cliquer sur un élément de l'IDE »**, puis clique n'importe où
 dans l'éditeur : un mot du code, un numéro de ligne, la marge, la ligne du curseur, la sélection…
 L'élément s'ouvre aussitôt dans la liste, prêt à être modifié.
 Si plusieurs couleurs se superposent à cet endroit, un petit menu te laisse choisir laquelle changer.
 Ce clic ne déplace pas le curseur, et `Échap` annule.
 
-### 📋 Fenêtre « Code Colors »
+### 📋 Fenêtre « Colorizer »
 - Tous les éléments colorables, **filtrables par langage** et par recherche.
 - Pour chaque élément : couleur du **texte**, **fond**, **effet** (souligné, ondulé, barré, encadré…),
   **gras**, **italique**.
@@ -34,10 +34,10 @@ Ce clic ne déplace pas le curseur, et `Échap` annule.
 Raccourci `Ctrl+Alt+Shift+C`. Détecte ce qui colore le code sous le curseur (coloration syntaxique
 et sémantique) et ouvre directement l'élément.
 
-### 🎭 7 thèmes prêts à l'emploi
+### 🎭 8 thèmes prêts à l'emploi
 | Sombres | Clairs |
 |---------|--------|
-| Minuit néon · Océan profond · Forêt · Braise · Contraste élevé | Papier · Pastel doux |
+| One Dark · Rose fluo & menthe · Bleu & turquoise · Ambre & sauge · Orange & or · Jaune & vert fluo | Bordeaux & vert · Magenta & bleu doux |
 
 Ces thèmes ne changent **que les couleurs du code** : le fond de l'éditeur, la marge, la ligne du
 curseur, la sélection et les numéros de ligne restent ceux de ton thème d'IDE.
@@ -87,13 +87,13 @@ Le plugin est généré ici : `build/distributions/code-colorizer-1.0.0.zip`.
 2. **⚙** › **Install Plugin from Disk…**
 3. Choisis le **zip** (sans le décompresser) → **Restart IDE**.
 
-La fenêtre **Code Colors** apparaît alors dans la barre latérale droite.
+La fenêtre **Colorizer** apparaît alors dans la barre latérale droite.
 
 ### Mettre à jour / désinstaller
 - **Mise à jour** : reconstruis le plugin, puis réinstalle le nouveau zip de la même façon.
   Tes couleurs et tes thèmes importés sont conservés : ils sont stockés dans `codeColorizer.xml`,
   dans la configuration de l'IDE.
-- **Désinstallation** : clique d'abord sur **Tout réinitialiser** dans Code Colors pour retrouver
+- **Désinstallation** : clique d'abord sur **Tout réinitialiser** dans Colorizer pour retrouver
   tes couleurs d'origine, puis *Settings › Plugins › Code Colorizer › Uninstall*.
 
 ### Problèmes fréquents
@@ -109,7 +109,7 @@ La fenêtre **Code Colors** apparaît alors dans la barre latérale droite.
 
 ## 🧭 Utilisation
 
-1. Ouvre la fenêtre **Code Colors** (barre latérale droite).
+1. Ouvre la fenêtre **Colorizer** (barre latérale droite).
 2. Choisis un élément, au choix :
    - clique sur **« Cliquer sur un élément de l'IDE »**, puis sur le code ;
    - fais un clic droit sur le code → **Changer la couleur de cet élément** ;
@@ -145,7 +145,7 @@ La fenêtre **Code Colors** apparaît alors dans la barre latérale droite.
 | `attributes` | Couleurs du code (`TextAttributesKey`) : `foreground`, `background`, `effectType`, `effectColor`, `bold`, `italic`. |
 
 - Les clés `DEFAULT_*` s'appliquent à **tous les langages** ; une clé précise (ex. `JAVA_KEYWORD`)
-  ne vise qu'un seul langage. Le nom exact d'une clé s'affiche quand tu la cherches dans Code Colors.
+  ne vise qu'un seul langage. Le nom exact d'une clé s'affiche quand tu la cherches dans Colorizer.
 - Une couleur absente du fichier garde la valeur du thème actuel.
 - Exemples complets : [`src/main/resources/presets/`](src/main/resources/presets/).
 
@@ -156,7 +156,7 @@ La fenêtre **Code Colors** apparaît alors dans la barre latérale droite.
 ```
 src/main/
 ├── kotlin/com/codecolorizer/
-│   ├── CodeColorsPanel.kt              # Fenêtre « Code Colors » (liste, éditeur, thèmes, pipette)
+│   ├── CodeColorsPanel.kt              # Fenêtre « Colorizer » (liste, éditeur, thèmes, pipette)
 │   ├── CodeColorsToolWindowFactory.kt  # Déclaration de la fenêtre
 │   ├── ColorEntries.kt                 # Catalogue des éléments colorables
 │   ├── ColorOverridesService.kt        # Stockage et application des couleurs (par thème d'IDE)

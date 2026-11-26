@@ -45,23 +45,23 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
 
     // --- Thèmes ---
     private val themeCombo = ComboBox<ThemeData>()
-    private val applyThemeButton = JButton("Appliquer", AllIcons.Actions.Execute)
-    private val importButton = JButton("Importer…", AllIcons.ToolbarDecorator.Import)
-    private val exportButton = JButton("Exporter…", AllIcons.ToolbarDecorator.Export)
-    private val deleteThemeButton = JButton("Supprimer", AllIcons.General.Remove)
+    private val applyThemeButton = JButton("Apply", AllIcons.Actions.Execute)
+    private val importButton = JButton("Import…", AllIcons.ToolbarDecorator.Import)
+    private val exportButton = JButton("Export…", AllIcons.ToolbarDecorator.Export)
+    private val deleteThemeButton = JButton("Delete", AllIcons.General.Remove)
 
     // --- Filtres ---
-    private val allGroupsLabel = "Tous les langages"
+    private val allGroupsLabel = "All languages"
     private val groupCombo = ComboBox<String>()
     private val search = SearchTextField(false)
-    private val onlyModified = JBCheckBox("Modifiés seulement")
+    private val onlyModified = JBCheckBox("Modified only")
     private val schemeLabel = JBLabel()
 
     // --- Pipette : cliquer sur un élément de l'éditeur ---
-    private val pickButton = JToggleButton("Cliquer sur un élément de l'IDE", AllIcons.General.Locate).apply {
-        toolTipText = "Puis clique sur du code, un numéro de ligne, la marge… dans un éditeur pour modifier sa couleur"
+    private val pickButton = JToggleButton("Pick an element in the IDE", AllIcons.General.Locate).apply {
+        toolTipText = "Then click some code, a line number, the gutter… in an editor to change its color"
     }
-    private val pickHint = JBLabel("Clique sur un élément dans l'éditeur (Échap pour annuler)").apply {
+    private val pickHint = JBLabel("Click an element in the editor (Esc to cancel)").apply {
         foreground = JBColor.BLUE
         isVisible = false
     }
@@ -72,14 +72,14 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
     private val list = JBList(listModel)
 
     // --- Éditeur ---
-    private val titleLabel = JBLabel("Sélectionne un élément dans la liste").apply {
+    private val titleLabel = JBLabel("Select an element in the list").apply {
         font = font.deriveFont(Font.BOLD)
     }
-    private val fgCheck = JBCheckBox("Texte")
+    private val fgCheck = JBCheckBox("Text")
     private val fgColor = ColorPanel()
-    private val bgCheck = JBCheckBox("Fond")
+    private val bgCheck = JBCheckBox("Background")
     private val bgColor = ColorPanel()
-    private val effectCheck = JBCheckBox("Effet")
+    private val effectCheck = JBCheckBox("Effect")
     private val effectColor = ColorPanel()
     private val effectCombo = ComboBox(
         arrayOf(
@@ -87,14 +87,14 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
             EffectType.BOLD_DOTTED_LINE, EffectType.STRIKEOUT, EffectType.BOXED, EffectType.ROUNDED_BOX
         )
     )
-    private val boldCheck = JBCheckBox("Gras")
-    private val italicCheck = JBCheckBox("Italique")
-    private val preview = JBLabel("  exemple = maFonction(42); // aperçu  ").apply {
+    private val boldCheck = JBCheckBox("Bold")
+    private val italicCheck = JBCheckBox("Italic")
+    private val preview = JBLabel("  example = myFunction(42); // preview  ").apply {
         isOpaque = true
         border = JBUI.Borders.empty(6)
     }
-    private val resetButton = JButton("Réinitialiser cet élément")
-    private val resetAllButton = JButton("Tout réinitialiser")
+    private val resetButton = JButton("Reset this element")
+    private val resetAllButton = JButton("Reset all")
     private val bgRow = row(bgCheck, bgColor)
     private val effectRow = row(effectCheck, effectColor, effectCombo)
     private val styleRow = row(boldCheck, italicCheck)
@@ -114,13 +114,13 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
         onlyModified.addActionListener { refilter() }
         // Thèmes
         themeCombo.renderer = SimpleListCellRenderer.create("") { t: ThemeData ->
-            t.name + "  —  " + (if (t.dark) "sombre" else "clair") + (if (t.builtIn) "" else " · importé")
+            t.name + "  —  " + (if (t.dark) "dark" else "light") + (if (t.builtIn) "" else " · imported")
         }
         themeCombo.addActionListener { updateThemeButtons() }
         // Largeur minimale réduite : la liste s'adapte à la fenêtre au lieu de pousser les boutons hors champ
         themeCombo.setMinimumAndPreferredWidth(120)
         groupCombo.setMinimumAndPreferredWidth(120)
-        applyThemeButton.toolTipText = "Appliquer le thème sélectionné"
+        applyThemeButton.toolTipText = "Apply the selected theme"
         applyThemeButton.addActionListener { applySelectedTheme() }
         importButton.addActionListener { importTheme() }
         exportButton.addActionListener { exportTheme() }
@@ -129,15 +129,15 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
         pickButton.addActionListener { if (pickButton.isSelected) startPicking() else picker?.cancel() }
 
         val filters = FormBuilder.createFormBuilder()
-            .addComponent(JBLabel("Thème prêt :"))
-            .addComponent(themeCombo)
+            .addComponent(JBLabel("Preset theme:"))
+            .addComponent(fullWidth(themeCombo))
             .addComponent(grid(applyThemeButton, importButton, exportButton, deleteThemeButton))
             .addSeparator()
             .addComponent(pickButton)
             .addComponent(pickHint)
             .addSeparator()
             .addComponent(schemeLabel)
-            .addLabeledComponent("Langage :", groupCombo)
+            .addLabeledComponent("Language:", fullWidth(groupCombo))
             .addComponent(search)
             .addComponent(onlyModified)
             .panel
@@ -172,8 +172,8 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
             val n = service.overrideCount()
             if (n == 0) return@addActionListener
             val ok = JOptionPane.showConfirmDialog(
-                this, "Réinitialiser les $n élément(s) modifié(s) du thème « ${service.scheme.name} » ?",
-                "Code Colors", JOptionPane.YES_NO_OPTION
+                this, "Reset the $n modified element(s) of the \"${service.scheme.name}\" scheme?",
+                "Colorizer", JOptionPane.YES_NO_OPTION
             )
             if (ok == JOptionPane.YES_OPTION) { service.resetAll(); load(current) }
         }
@@ -264,36 +264,36 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
     private fun applySelectedTheme() {
         val t = themeCombo.selectedItem as? ThemeData ?: return
         val n = service.overrideCount()
-        val msg = StringBuilder("Appliquer le thème « ${t.name} » au thème d'IDE « ${service.scheme.name} » ?")
-        if (n > 0) msg.append("\n\nTes $n modification(s) actuelles seront remplacées.\nAstuce : clique d'abord sur « Exporter… » pour les garder.")
+        val msg = StringBuilder("Apply the \"${t.name}\" theme to the \"${service.scheme.name}\" IDE scheme?")
+        if (n > 0) msg.append("\n\nYour $n current change(s) will be replaced.\nTip: click \"Export…\" first to keep them.")
         if (t.dark == JBColor.isBright()) {
-            val ideKind = if (t.dark) "sombre (Darcula, Dark…)" else "clair (Light…)"
-            msg.append("\n\nCe thème est ${if (t.dark) "sombre" else "clair"} : il rend mieux avec un thème d'IDE $ideKind.")
+            val ideKind = if (t.dark) "dark (Darcula, Dark…)" else "light (Light…)"
+            msg.append("\n\nThis theme is ${if (t.dark) "dark" else "light"}: it looks best with a $ideKind IDE theme.")
         }
-        val ok = Messages.showOkCancelDialog(project, msg.toString(), "Code Colors", "Appliquer", "Annuler", Messages.getQuestionIcon())
+        val ok = Messages.showOkCancelDialog(project, msg.toString(), "Colorizer", "Apply", "Cancel", Messages.getQuestionIcon())
         if (ok != Messages.OK) return
         service.applyTheme(t, replace = true)
     }
 
     private fun importTheme() {
         val descriptor = FileChooserDescriptorFactory.createSingleFileDescriptor("json")
-            .withTitle("Importer un thème Code Colorizer")
+            .withTitle("Import a Code Colorizer theme")
         val file = FileChooser.chooseFile(descriptor, project, null) ?: return
         val theme = try {
             ThemeJson.read(String(file.contentsToByteArray(), Charsets.UTF_8))
         } catch (ex: Exception) {
-            Messages.showErrorDialog(project, "Impossible de lire ce thème :\n${ex.message}", "Code Colors")
+            Messages.showErrorDialog(project, "Unable to read this theme:\n${ex.message}", "Colorizer")
             return
         }
-        if (ThemePresets.all.any { it.name == theme.name }) theme.name = theme.name + " (importé)"
+        if (ThemePresets.all.any { it.name == theme.name }) theme.name = theme.name + " (imported)"
         service.saveUserTheme(theme)
         reloadThemes(theme.name)
 
         val count = theme.attributes.size + theme.editorColors.size
         val choice = Messages.showYesNoCancelDialog(
             project,
-            "Thème « ${theme.name} » importé ($count couleurs). Il est maintenant dans la liste des thèmes.\n\nL'appliquer maintenant ?",
-            "Code Colors", "Remplacer mes couleurs", "Fusionner avec mes couleurs", "Plus tard",
+            "Theme \"${theme.name}\" imported ($count colors). It is now in the theme list.\n\nApply it now?",
+            "Colorizer", "Replace my colors", "Merge with my colors", "Later",
             Messages.getQuestionIcon()
         )
         when (choice) {
@@ -305,37 +305,37 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
     private fun exportTheme() {
         val choice = Messages.showDialog(
             project,
-            "Que veux-tu exporter ?\n\n• Toutes les couleurs : un thème complet, identique à ce que tu vois.\n• Mes modifications : seulement ce que tu as changé avec Code Colors.",
-            "Exporter un thème",
-            arrayOf("Toutes les couleurs", "Mes modifications", "Annuler"), 0, Messages.getQuestionIcon()
+            "What do you want to export?\n\n• All colors: a complete theme, identical to what you see.\n• My changes: only what you changed with Colorizer.",
+            "Export a theme",
+            arrayOf("All colors", "My changes", "Cancel"), 0, Messages.getQuestionIcon()
         )
         if (choice != 0 && choice != 1) return
         val everything = choice == 0
         if (!everything && service.overrideCount() == 0) {
-            Messages.showInfoMessage(project, "Tu n'as encore rien modifié dans le thème « ${service.scheme.name} ».", "Code Colors")
+            Messages.showInfoMessage(project, "You haven't changed anything in the \"${service.scheme.name}\" scheme yet.", "Colorizer")
             return
         }
         val name = Messages.showInputDialog(
-            project, "Nom du thème :", "Exporter un thème", null, "Mon thème", null
+            project, "Theme name:", "Export a theme", null, "My theme", null
         )?.trim()?.takeIf { it.isNotEmpty() } ?: return
 
         val theme = service.exportTheme(name, everything)
         val fileName = name.replace(Regex("[\\\\/:*?\"<>|]+"), "-") + ".json"
         val wrapper = FileChooserFactory.getInstance()
-            .createSaveFileDialog(FileSaverDescriptor("Exporter le thème", "Fichier JSON du thème", "json"), project)
+            .createSaveFileDialog(FileSaverDescriptor("Export theme", "Theme JSON file", "json"), project)
             .save(null as VirtualFile?, fileName) ?: return
         try {
             wrapper.file.writeText(ThemeJson.write(theme), Charsets.UTF_8)
-            Messages.showInfoMessage(project, "Thème exporté (${theme.attributes.size + theme.editorColors.size} couleurs) :\n${wrapper.file.path}", "Code Colors")
+            Messages.showInfoMessage(project, "Theme exported (${theme.attributes.size + theme.editorColors.size} colors):\n${wrapper.file.path}", "Colorizer")
         } catch (ex: Exception) {
-            Messages.showErrorDialog(project, "Impossible d'écrire le fichier :\n${ex.message}", "Code Colors")
+            Messages.showErrorDialog(project, "Unable to write the file:\n${ex.message}", "Colorizer")
         }
     }
 
     private fun deleteSelectedTheme() {
         val t = themeCombo.selectedItem as? ThemeData ?: return
         if (t.builtIn) return
-        val ok = Messages.showYesNoDialog(project, "Retirer « ${t.name} » de la liste des thèmes ?\n(Les couleurs déjà appliquées ne changent pas.)", "Code Colors", Messages.getQuestionIcon())
+        val ok = Messages.showYesNoDialog(project, "Remove \"${t.name}\" from the theme list?\n(Colors already applied stay unchanged.)", "Colorizer", Messages.getQuestionIcon())
         if (ok != Messages.YES) return
         service.deleteUserTheme(t.name)
         reloadThemes(null)
@@ -363,7 +363,7 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
 
     private fun updateSchemeLabel() {
         val n = service.overrideCount()
-        schemeLabel.text = "Thème : ${service.scheme.name}" + if (n > 0) "  ($n modifié${if (n > 1) "s" else ""})" else ""
+        schemeLabel.text = "Scheme: ${service.scheme.name}" + if (n > 0) "  ($n modified)" else ""
     }
 
     private fun load(entry: ColorEntry?) {
@@ -374,10 +374,10 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
             listOf(fgCheck, fgColor, bgCheck, bgColor, effectCheck, effectColor, effectCombo, boldCheck, italicCheck, resetButton)
                 .forEach { it.isEnabled = enabled }
             val editorColor = entry?.colorKey
-            fgCheck.text = if (editorColor != null) "Couleur" else "Texte"
+            fgCheck.text = if (editorColor != null) "Color" else "Text"
             listOf(bgRow, effectRow, styleRow).forEach { it.isVisible = editorColor == null }
             if (entry == null) {
-                titleLabel.text = "Sélectionne un élément dans la liste"
+                titleLabel.text = "Select an element in the list"
                 updatePreview(null)
                 return
             }
@@ -462,19 +462,22 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
         }
     }
 
+    /** Enveloppe le composant pour qu'il occupe toute la largeur (FormBuilder ne l'étire pas pour les listes déroulantes). */
+    private fun fullWidth(c: JComponent) = JPanel(BorderLayout()).apply { add(c, BorderLayout.CENTER) }
+
     /** Boutons sur 2 colonnes : ils restent visibles même si la fenêtre est étroite. */
     private fun grid(vararg c: JComponent) = JPanel(java.awt.GridLayout(0, 2, 4, 4)).apply { c.forEach { add(it) } }
 
     private fun row(vararg c: JComponent) = JPanel(FlowLayout(FlowLayout.LEFT, 6, 2)).apply { c.forEach { add(it) } }
 
     private fun effectName(t: EffectType?): String = when (t) {
-        EffectType.LINE_UNDERSCORE -> "Souligné"
-        EffectType.WAVE_UNDERSCORE -> "Souligné ondulé"
-        EffectType.BOLD_LINE_UNDERSCORE -> "Souligné épais"
-        EffectType.BOLD_DOTTED_LINE -> "Pointillés"
-        EffectType.STRIKEOUT -> "Barré"
-        EffectType.BOXED -> "Encadré"
-        EffectType.ROUNDED_BOX -> "Encadré arrondi"
+        EffectType.LINE_UNDERSCORE -> "Underline"
+        EffectType.WAVE_UNDERSCORE -> "Wavy underline"
+        EffectType.BOLD_LINE_UNDERSCORE -> "Bold underline"
+        EffectType.BOLD_DOTTED_LINE -> "Dotted line"
+        EffectType.STRIKEOUT -> "Strikethrough"
+        EffectType.BOXED -> "Box"
+        EffectType.ROUNDED_BOX -> "Rounded box"
         else -> t?.name ?: ""
     }
 

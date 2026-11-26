@@ -8,17 +8,17 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.colors.ColorKey
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.editor.event.EditorMouseEvent
+import com.intellij.openapi.editor.event.EditorMouseEventArea
+import com.intellij.openapi.editor.event.EditorMouseListener
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.impl.DocumentMarkupModel
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.awt.RelativePoint
-import java.awt.AWTEvent
-import java.awt.Component
 import java.awt.Point
 import java.awt.event.KeyEvent
-import java.awt.event.MouseEvent
 import javax.swing.SwingUtilities
 
 /** Retrouve les couleurs qui s'appliquent à un endroit de l'éditeur. */
@@ -98,7 +98,7 @@ object ElementFinder {
         val line = editor.xyToLogicalPosition(Point(0, y)).line
         val keys = ArrayList<ColorKey>()
         if (line < editor.document.lineCount) {
-            if (line == editor.caretModel.logicalPosition.line) keys += EditorColors.LINE_NUMBER_ON_CARET_ROW
+            if (line == editor.caretModel.logicalPosition.line) keys += EditorColors.LINE_NUMBER_ON_CARET_ROW_COLOR
             keys += EditorColors.LINE_NUMBERS_COLOR
         }
         keys += EditorColors.GUTTER_BACKGROUND
@@ -109,78 +109,80 @@ object ElementFinder {
 /**
  * Mode "pipette" : le prochain clic dans un éditeur (texte ou marge) ne déplace pas le curseur,
  * il désigne l'élément dont on veut changer la couleur. Échap annule.
+ *
+ * Les clics sont captés via l'API officielle des éditeurs (EditorMouseListener), qui reçoit les clics
+ * du texte comme de la marge et permet de les "consommer" pour que l'éditeur ne bouge pas.
  */
 class ElementPicker private constructor(
     private val onPicked: (List<ColorEntry>, RelativePoint) -> Unit,
     private val onEnd: () -> Unit,
 ) : Disposable {
 
-    private var swallowUntilRelease = false
+    /** Vrai entre le clic choisi et son relâchement : on avale la suite du clic. */
+    private var swallowing = false
     private var ended = false
 
-    private val dispatcher = IdeEventQueue.EventDispatcher { e -> handle(e) }
+    private val mouseListener = object : EditorMouseListener {
+        override fun mousePressed(event: EditorMouseEvent) {
+            if (ended) return
+            val editor = event.editor
+            val e = event.mouseEvent
+            val src = e.component ?: return
+            val p = SwingUtilities.convertPoint(src, e.point, editor.contentComponent)
+            val catalog = ColorEntries.all()
+            val entries = if (event.area == EditorMouseEventArea.EDITING_AREA)
+                ElementFinder.entriesInText(editor.project, editor, p, catalog)
+            else
+                ElementFinder.entriesInGutter(editor, p.y, catalog)
+            event.consume()
+            e.consume()
+            swallowing = true
+            val where = RelativePoint(src, e.point)
+            finish()
+            ApplicationManager.getApplication().invokeLater { onPicked(entries, where) }
+        }
 
-    private fun handle(e: AWTEvent): Boolean {
-        if (!ended && e is KeyEvent && e.id == KeyEvent.KEY_PRESSED && e.keyCode == KeyEvent.VK_ESCAPE) {
-            cancel(); return true
+        override fun mouseReleased(event: EditorMouseEvent) {
+            if (swallowing) { event.consume(); event.mouseEvent.consume(); swallowing = false }
         }
-        if (e !is MouseEvent) return false
-        if (swallowUntilRelease) {
-            // On avale aussi le relâchement / clic qui suivent, pour que l'éditeur ne bouge pas
-            if (e.id == MouseEvent.MOUSE_RELEASED || e.id == MouseEvent.MOUSE_CLICKED) {
-                if (e.id == MouseEvent.MOUSE_CLICKED) swallowUntilRelease = false
-                return true
+
+        override fun mouseClicked(event: EditorMouseEvent) {
+            if (pendingClick) {
+                pendingClick = false
+                event.consume(); event.mouseEvent.consume()
             }
-            if (e.id == MouseEvent.MOUSE_DRAGGED) return true
         }
-        if (e.id != MouseEvent.MOUSE_PRESSED || ended) return false
-        val src = e.component ?: return false
-        val hit = findEditor(src) ?: return false   // clic hors éditeur : comportement normal
-        val (editor, inGutter) = hit
-        val catalog = ColorEntries.all()
-        val project = editor.project
-        val entries = if (inGutter) {
-            val p = SwingUtilities.convertPoint(src, e.point, editor.contentComponent)
-            ElementFinder.entriesInGutter(editor, p.y, catalog)
-        } else {
-            val p = SwingUtilities.convertPoint(src, e.point, editor.contentComponent)
-            ElementFinder.entriesInText(project, editor, p, catalog)
-        }
-        swallowUntilRelease = true
-        val where = RelativePoint(src, e.point)
-        finish()
-        ApplicationManager.getApplication().invokeLater { onPicked(entries, where) }
-        return true
     }
 
-    private fun findEditor(c: Component): Pair<Editor, Boolean>? {
-        for (editor in EditorFactory.getInstance().allEditors) {
-            if (SwingUtilities.isDescendingFrom(c, editor.contentComponent)) return editor to false
-            val gutter = (editor as? EditorEx)?.gutterComponentEx ?: editor.gutter as? Component
-            if (gutter != null && SwingUtilities.isDescendingFrom(c, gutter)) return editor to true
-        }
-        return null
+    /** Le MOUSE_CLICKED qui suit le relâchement du clic choisi, à avaler aussi. */
+    private var pendingClick = false
+
+    private val keyDispatcher = IdeEventQueue.EventDispatcher { e ->
+        if (!ended && e is KeyEvent && e.id == KeyEvent.KEY_PRESSED && e.keyCode == KeyEvent.VK_ESCAPE) {
+            cancel(); true
+        } else false
     }
 
     /** Arrête le mode sans rien choisir. */
     fun cancel() {
-        swallowUntilRelease = false
+        swallowing = false
         finish()
     }
 
     private fun finish() {
         if (ended) return
         ended = true
+        pendingClick = swallowing
         onEnd()
-        // On garde le dispatcher un instant pour avaler le relâchement du clic, puis on le retire.
-        if (!swallowUntilRelease) Disposer.dispose(this)
-        else javax.swing.Timer(1500) { Disposer.dispose(this) }.apply { isRepeats = false; start() }
+        // On garde l'écoute un instant pour avaler le relâchement du clic, puis on la retire.
+        if (!swallowing) Disposer.dispose(this)
+        else javax.swing.Timer(1000) { Disposer.dispose(this) }.apply { isRepeats = false; start() }
     }
 
     override fun dispose() { ended = true }
 
     companion object {
-        /** Démarre le mode. [parent] : arrête tout si la fenêtre Code Colors est fermée. */
+        /** Démarre le mode. [parent] : arrête tout si la fenêtre Colorizer est fermée. */
         fun start(
             parent: Disposable,
             onPicked: (List<ColorEntry>, RelativePoint) -> Unit,
@@ -188,7 +190,8 @@ class ElementPicker private constructor(
         ): ElementPicker {
             val picker = ElementPicker(onPicked, onEnd)
             Disposer.register(parent, picker)
-            IdeEventQueue.getInstance().addDispatcher(picker.dispatcher, picker)
+            EditorFactory.getInstance().eventMulticaster.addEditorMouseListener(picker.mouseListener, picker)
+            IdeEventQueue.getInstance().addDispatcher(picker.keyDispatcher, picker)
             return picker
         }
     }

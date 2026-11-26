@@ -16,7 +16,7 @@ class CodeColorsToolWindowFactory : ToolWindowFactory, DumbAware {
     }
 
     companion object {
-        const val ID = "Code Colors"
+        const val ID = "Colorizer"
 
         /** Ouvre la fenêtre et sélectionne l'élément voulu. */
         fun openAndSelect(project: Project, entry: ColorEntry) {

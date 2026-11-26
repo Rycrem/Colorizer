@@ -16,7 +16,7 @@ import javax.swing.JList
 /**
  * Clic droit → "Changer la couleur de cet élément".
  * Trouve toutes les couleurs qui s'appliquent au code sous le curseur
- * (coloration syntaxique + coloration sémantique), puis ouvre la fenêtre Code Colors dessus.
+ * (coloration syntaxique + coloration sémantique), puis ouvre la fenêtre Colorizer dessus.
  */
 class ChangeColorAtCaretAction : AnAction(), DumbAware {
 
@@ -33,7 +33,7 @@ class ChangeColorAtCaretAction : AnAction(), DumbAware {
         val entries = ElementFinder.textKeysAtCaret(project, editor).map { ColorEntries.describe(it, catalog) }
 
         when (entries.size) {
-            0 -> Messages.showInfoMessage(project, "Aucune couleur trouvée à cet endroit.", "Code Colors")
+            0 -> Messages.showInfoMessage(project, "No color found at this location.", "Colorizer")
             1 -> CodeColorsToolWindowFactory.openAndSelect(project, entries[0])
             else -> EntryPopup.create(entries) { CodeColorsToolWindowFactory.openAndSelect(project, it) }
                 .showInBestPositionFor(editor)
@@ -41,12 +41,12 @@ class ChangeColorAtCaretAction : AnAction(), DumbAware {
     }
 }
 
-/** Petit menu "Quelle couleur modifier ?" avec une pastille de la couleur actuelle. */
+/** Petit menu "Which color do you want to change?" avec une pastille de la couleur actuelle. */
 object EntryPopup {
     fun create(entries: List<ColorEntry>, onChosen: (ColorEntry) -> Unit): JBPopup =
         JBPopupFactory.getInstance()
             .createPopupChooserBuilder(entries)
-            .setTitle("Quelle couleur modifier ?")
+            .setTitle("Which color do you want to change?")
             .setRenderer(Renderer())
             .setItemChosenCallback { onChosen(it) }
             .createPopup()
