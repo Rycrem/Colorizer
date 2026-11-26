@@ -1,6 +1,5 @@
 package com.codecolorizer
 
-import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
@@ -14,6 +13,8 @@ import com.intellij.openapi.editor.event.EditorMouseListener
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.impl.DocumentMarkupModel
 import com.intellij.openapi.editor.markup.RangeHighlighter
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.awt.RelativePoint
@@ -44,7 +45,12 @@ object ElementFinder {
         val highlighter = (editor as? EditorEx)?.highlighter
         if (highlighter != null) {
             val it = highlighter.createIterator(offset)
-            if (!it.atEnd()) it.textAttributesKeys.reversed().forEach { k -> keys += k }
+            if (!it.atEnd()) {
+                // API stable : on demande au coloriseur du langage les couleurs du jeton
+                val file = FileDocumentManager.getInstance().getFile(doc)
+                val syntax = file?.let { f -> SyntaxHighlighterFactory.getSyntaxHighlighter(f.fileType, project, f) }
+                syntax?.getTokenHighlights(it.tokenType)?.reversed()?.forEach { k -> keys += k }
+            }
         }
 
         // 3) Couleurs "par défaut" dont elles héritent (ex. Java Keyword → Language Defaults › Keyword)
@@ -157,10 +163,9 @@ class ElementPicker private constructor(
     /** Le MOUSE_CLICKED qui suit le relâchement du clic choisi, à avaler aussi. */
     private var pendingClick = false
 
-    private val keyDispatcher = IdeEventQueue.EventDispatcher { e ->
-        if (!ended && e is KeyEvent && e.id == KeyEvent.KEY_PRESSED && e.keyCode == KeyEvent.VK_ESCAPE) {
-            cancel(); true
-        } else false
+    /** Échap annule (écouteur AWT standard, retiré à la fin du mode). */
+    private val escListener = java.awt.event.AWTEventListener { e ->
+        if (!ended && e is KeyEvent && e.id == KeyEvent.KEY_PRESSED && e.keyCode == KeyEvent.VK_ESCAPE) cancel()
     }
 
     /** Arrête le mode sans rien choisir. */
@@ -191,7 +196,9 @@ class ElementPicker private constructor(
             val picker = ElementPicker(onPicked, onEnd)
             Disposer.register(parent, picker)
             EditorFactory.getInstance().eventMulticaster.addEditorMouseListener(picker.mouseListener, picker)
-            IdeEventQueue.getInstance().addDispatcher(picker.keyDispatcher, picker)
+            val toolkit = java.awt.Toolkit.getDefaultToolkit()
+            toolkit.addAWTEventListener(picker.escListener, java.awt.AWTEvent.KEY_EVENT_MASK)
+            Disposer.register(picker) { toolkit.removeAWTEventListener(picker.escListener) }
             return picker
         }
     }

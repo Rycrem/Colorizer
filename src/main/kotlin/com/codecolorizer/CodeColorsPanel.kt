@@ -4,11 +4,8 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
-import com.intellij.openapi.fileChooser.FileChooserFactory
-import com.intellij.openapi.fileChooser.FileSaverDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBColor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.colors.EditorColorsListener
@@ -321,12 +318,21 @@ class CodeColorsPanel(private val project: Project) : JPanel(BorderLayout()), Di
 
         val theme = service.exportTheme(name, everything)
         val fileName = name.replace(Regex("[\\\\/:*?\"<>|]+"), "-") + ".json"
-        val wrapper = FileChooserFactory.getInstance()
-            .createSaveFileDialog(FileSaverDescriptor("Export theme", "Theme JSON file", "json"), project)
-            .save(null as VirtualFile?, fileName) ?: return
+        // Choix du dossier (API stable), puis écriture de <nom>.json dedans
+        val folderDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
+            .withTitle("Export theme: choose a folder")
+        val folder = FileChooser.chooseFile(folderDescriptor, project, null) ?: return
+        val file = java.io.File(folder.path, fileName)
+        if (file.exists()) {
+            val replace = Messages.showYesNoDialog(
+                project, "\"$fileName\" already exists in this folder. Replace it?", "Colorizer", Messages.getQuestionIcon()
+            )
+            if (replace != Messages.YES) return
+        }
         try {
-            wrapper.file.writeText(ThemeJson.write(theme), Charsets.UTF_8)
-            Messages.showInfoMessage(project, "Theme exported (${theme.attributes.size + theme.editorColors.size} colors):\n${wrapper.file.path}", "Colorizer")
+            file.writeText(ThemeJson.write(theme), Charsets.UTF_8)
+            folder.refresh(true, false)
+            Messages.showInfoMessage(project, "Theme exported (${theme.attributes.size + theme.editorColors.size} colors):\n${file.path}", "Colorizer")
         } catch (ex: Exception) {
             Messages.showErrorDialog(project, "Unable to write the file:\n${ex.message}", "Colorizer")
         }
