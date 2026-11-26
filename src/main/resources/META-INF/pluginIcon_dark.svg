@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <!-- Colorizer: palette de peintre -->
+  <g transform="scale(2.5)">
+    <path fill="#E8C08E" stroke="#F3DDBF" stroke-width="0.4" stroke-linejoin="round" d="M8 1.5C4.1 1.5 1 4.3 1 7.8c0 3.4 2.9 6.2 6.4 6.2.9 0 1.5-.6 1.5-1.4 0-.4-.2-.7-.4-1-.2-.3-.4-.6-.4-1 0-.8.6-1.3 1.4-1.3h1.7c2.2 0 3.8-1.6 3.8-3.6C15 3.9 11.9 1.5 8 1.5Z"/>
+    <circle cx="4.5" cy="7.8" r="1.15" fill="#E06C75"/>
+    <circle cx="5.8" cy="4.3" r="1.15" fill="#E5C07B"/>
+    <circle cx="9.4" cy="3.7" r="1.15" fill="#98C379"/>
+    <circle cx="12.3" cy="5.8" r="1.15" fill="#61AFEF"/>
+  </g>
+</svg>
