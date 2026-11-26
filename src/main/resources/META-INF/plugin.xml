@@ -1,0 +1,48 @@
+<idea-plugin>
+    <id>com.codecolorizer</id>
+    <name>Code Colorizer</name>
+    <vendor>Code Colorizer</vendor>
+    <description><![CDATA[
+        Modifie facilement la couleur de chaque élément du code :
+        <ul>
+          <li>Fenêtre <b>Code Colors</b> : tous les éléments colorables de chaque langage
+              (mots-clés, chaînes, commentaires, méthodes, champs, annotations...), avec
+              couleur du texte, fond, gras, italique et soulignement.</li>
+          <li>Clic droit dans l'éditeur → <b>Changer la couleur de cet élément</b> :
+              retrouve automatiquement ce qui colore le code sous le curseur.</li>
+          <li>Bouton <b>Cliquer sur un élément de l'IDE</b> : clique sur du code, un numéro de ligne,
+              la marge... dans l'éditeur pour l'afficher dans la liste et changer sa couleur.</li>
+          <li><b>7 thèmes prêts à l'emploi</b> (Minuit néon, Océan profond, Forêt, Braise,
+              Contraste élevé, Papier, Pastel doux) applicables en un clic ; ils gardent le fond
+              et les numéros de ligne de ton thème d'IDE.</li>
+          <li><b>Import / export</b> de thèmes en JSON pour les partager ou les sauvegarder.</li>
+          <li>Les changements s'appliquent en direct et sont conservés par thème.</li>
+        </ul>
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="Code Colors"
+                    anchor="right"
+                    icon="AllIcons.Actions.Colors"
+                    factoryClass="com.codecolorizer.CodeColorsToolWindowFactory"/>
+        <postStartupActivity implementation="com.codecolorizer.ApplyOverridesOnStartup"/>
+    </extensions>
+
+    <applicationListeners>
+        <listener class="com.codecolorizer.SchemeSwitchListener"
+                  topic="com.intellij.openapi.editor.colors.EditorColorsListener"/>
+    </applicationListeners>
+
+    <actions>
+        <action id="CodeColorizer.ChangeColorAtCaret"
+                class="com.codecolorizer.ChangeColorAtCaretAction"
+                text="Changer la Couleur de cet Élément"
+                description="Modifier la couleur de l'élément de code sous le curseur"
+                icon="AllIcons.Actions.Colors">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift C"/>
+        </action>
+    </actions>
+</idea-plugin>

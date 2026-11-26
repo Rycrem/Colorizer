@@ -1,0 +1,124 @@
+{
+  "name": "Minuit néon",
+  "dark": true,
+  "editor": {
+    "CARET_COLOR": "#FF4FA3",
+    "INDENT_GUIDE": "#26263A",
+    "RIGHT_MARGIN_COLOR": "#26263A"
+  },
+  "attributes": {
+    "TEXT": {
+      "foreground": "#E4E4F4"
+    },
+    "DEFAULT_KEYWORD": {
+      "foreground": "#FF4FA3",
+      "bold": true
+    },
+    "DEFAULT_STRING": {
+      "foreground": "#7CFFB2"
+    },
+    "DEFAULT_VALID_STRING_ESCAPE": {
+      "foreground": "#FFE66D"
+    },
+    "DEFAULT_NUMBER": {
+      "foreground": "#FFB86B"
+    },
+    "DEFAULT_LINE_COMMENT": {
+      "foreground": "#6B6B90",
+      "italic": true
+    },
+    "DEFAULT_BLOCK_COMMENT": {
+      "foreground": "#6B6B90",
+      "italic": true
+    },
+    "DEFAULT_DOC_COMMENT": {
+      "foreground": "#7F7FA8",
+      "italic": true
+    },
+    "DEFAULT_DOC_COMMENT_TAG": {
+      "foreground": "#A0A0D0"
+    },
+    "DEFAULT_FUNCTION_DECLARATION": {
+      "foreground": "#4FC3FF"
+    },
+    "DEFAULT_FUNCTION_CALL": {
+      "foreground": "#8AD8FF"
+    },
+    "DEFAULT_STATIC_METHOD": {
+      "foreground": "#8AD8FF"
+    },
+    "DEFAULT_INSTANCE_METHOD": {
+      "foreground": "#8AD8FF"
+    },
+    "DEFAULT_INSTANCE_FIELD": {
+      "foreground": "#C792EA"
+    },
+    "DEFAULT_STATIC_FIELD": {
+      "foreground": "#F78CFF",
+      "italic": true
+    },
+    "DEFAULT_CONSTANT": {
+      "foreground": "#F78CFF",
+      "italic": true
+    },
+    "DEFAULT_GLOBAL_VARIABLE": {
+      "foreground": "#F78CFF",
+      "italic": true
+    },
+    "DEFAULT_CLASS_NAME": {
+      "foreground": "#5EF1E0"
+    },
+    "DEFAULT_CLASS_REFERENCE": {
+      "foreground": "#5EF1E0"
+    },
+    "DEFAULT_INTERFACE_NAME": {
+      "foreground": "#5EF1E0"
+    },
+    "DEFAULT_METADATA": {
+      "foreground": "#B4F75E"
+    },
+    "DEFAULT_PARAMETER": {
+      "foreground": "#FFAA80",
+      "italic": true
+    },
+    "DEFAULT_LOCAL_VARIABLE": {
+      "foreground": "#E4E4F4"
+    },
+    "DEFAULT_IDENTIFIER": {
+      "foreground": "#E4E4F4"
+    },
+    "DEFAULT_OPERATION_SIGN": {
+      "foreground": "#FF79C6"
+    },
+    "DEFAULT_BRACES": {
+      "foreground": "#9A9AC0"
+    },
+    "DEFAULT_BRACKETS": {
+      "foreground": "#9A9AC0"
+    },
+    "DEFAULT_PARENTHS": {
+      "foreground": "#9A9AC0"
+    },
+    "DEFAULT_DOT": {
+      "foreground": "#9A9AC0"
+    },
+    "DEFAULT_COMMA": {
+      "foreground": "#9A9AC0"
+    },
+    "DEFAULT_SEMICOLON": {
+      "foreground": "#9A9AC0"
+    },
+    "DEFAULT_PREDEFINED_SYMBOL": {
+      "foreground": "#5EF1E0"
+    },
+    "DEFAULT_TAG": {
+      "foreground": "#FF4FA3"
+    },
+    "DEFAULT_ATTRIBUTE": {
+      "foreground": "#4FC3FF"
+    },
+    "DEFAULT_LABEL": {
+      "foreground": "#FFE66D"
+    }
+  }
+}
